@@ -1,0 +1,25 @@
+#!/bin/bash
+
+BEARER_TOKEN="your-token-here"
+NTFY_URI="https://ntfy.domain/topic"
+
+if [[ "$DUPLICATI__PARSED_RESULT" == "Success" ]]; then
+  message="Status: $DUPLICATI__PARSED_RESULT"
+  priority=3
+  title="Backup successful :)"
+else
+  message="Status: $DUPLICATI__PARSED_RESULT"
+  priority=5
+  title="Backup failed :("
+  tags="warning"
+fi
+
+title+=" - $DUPLICATI__backup_name"
+
+curl \
+  -s \
+  -H "Authorization: Bearer $BEARER_TOKEN" \
+  -H "X-Title: $title" \
+  -H "X-Tags: $tags" \
+  -d "$message" \
+  "$NTFY_URI"
